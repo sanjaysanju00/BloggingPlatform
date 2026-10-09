@@ -187,10 +187,42 @@ def login():
 
     return render_template("login.html")
 
-
-@app.route('/register', methods=['GET', 'POST'])
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template('register.html')
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+
+        if not username or not email or not password:
+            return render_template(
+                "register.html",
+                error="Please fill in all fields."
+            )
+
+        conn = get_db()
+
+        try:
+            conn.execute(
+                """
+                INSERT INTO users (username, email, password)
+                VALUES (?, ?, ?)
+                """,
+                (username, email, password)
+            )
+            conn.commit()
+            conn.close()
+
+            return redirect(url_for("login"))
+
+        except sqlite3.IntegrityError:
+            conn.close()
+            return render_template(
+                "register.html",
+                error="This email is already registered. Please log in."
+            )
+
+    return render_template("register.html")
 # ---------------- LOGOUT ----------------
 
 @app.route("/logout")

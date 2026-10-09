@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Create Blog</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">
+        ✍️ BlogSpace
+    </div>
+
+    <a href="/">Home</a>
+
+</nav>
+
+
+<div class="form-container">
+
+    <div class="form-card">
+
+        <h1>✍️ Create New Blog</h1>
+
+        <form method="POST">
+
+            <label>Blog Title</label>
+
+            <input
+                type="text"
+                name="title"
+                placeholder="Enter your blog title"
+                required
+            >
+
+            <label>Blog Content</label>
+
+            <textarea
+                name="content"
+                rows="12"
+                placeholder="Write your blog here..."
+                required
+            ></textarea>
+
+            <button type="submit">
+                Publish Blog
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

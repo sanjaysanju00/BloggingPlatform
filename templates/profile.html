@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>{{ user["username"] }} - Profile</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">
+        ✍️ BlogSpace
+    </div>
+
+    <div>
+
+        <a href="/">Home</a>
+
+        <a href="/create_post">
+            Create Blog
+        </a>
+
+        <a href="/logout">
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+<div class="profile-container">
+
+    <div class="profile-card">
+
+        <div class="avatar">
+            {{ user["username"][0].upper() }}
+        </div>
+
+        <h1>
+            {{ user["username"] }}
+        </h1>
+
+        <p>
+            {{ user["email"] }}
+        </p>
+
+        <div class="stats">
+
+            <div>
+                <strong>{{ posts|length }}</strong>
+                <span>Posts</span>
+            </div>
+
+            <div>
+                <strong>{{ followers }}</strong>
+                <span>Followers</span>
+            </div>
+
+            <div>
+                <strong>{{ following }}</strong>
+                <span>Following</span>
+            </div>
+
+        </div>
+
+
+        {% if user["id"] != session["user_id"] %}
+
+            {% if is_following %}
+
+                <a class="button"
+                   href="/follow/{{ user['id'] }}">
+
+                    Unfollow
+
+                </a>
+
+            {% else %}
+
+                <a class="button"
+                   href="/follow/{{ user['id'] }}">
+
+                    Follow
+
+                </a>
+
+            {% endif %}
+
+        {% endif %}
+
+    </div>
+
+
+    <h2>
+        {{ user["username"] }}'s Blogs
+    </h2>
+
+
+    {% for post in posts %}
+
+    <div class="post-card">
+
+        <h2>
+            {{ post["title"] }}
+        </h2>
+
+        <p class="post-content">
+            {{ post["content"] }}
+        </p>
+
+    </div>
+
+    {% else %}
+
+    <p>
+        No blogs published yet.
+    </p>
+
+    {% endfor %}
+
+</div>
+
+</body>
+
+</html>

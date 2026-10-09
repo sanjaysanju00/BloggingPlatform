@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogSpace | Social Blogging</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <a href="/" class="brand">
+        <span class="brand-icon">B</span>
+        <span>BlogSpace</span>
+    </a>
+
+    <form action="/" method="GET" class="search-bar">
+        <span>⌕</span>
+        <input type="search" name="q"
+               value="{{ search_query }}"
+               placeholder="Search blogs and stories...">
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="top-actions">
+        <a href="/create_post" class="write-button">＋ Write</a>
+        <a href="/profile/{{ session['user_id'] }}"
+           class="top-avatar">
+            {{ username[0].upper() }}
+        </a>
+    </div>
+</header>
+
+<div class="dashboard">
+
+    <aside class="left-sidebar">
+        <div class="sidebar-label">MENU</div>
+
+        <a href="/" class="nav-item active">
+            <span>⌂</span> Home
+        </a>
+
+        <a href="/?q=" class="nav-item">
+            <span>⌕</span> Explore
+        </a>
+
+        <a href="/create_post" class="nav-item">
+            <span>✎</span> Create a blog
+        </a>
+
+        <a href="/profile/{{ session['user_id'] }}"
+           class="nav-item">
+            <span>♙</span> My profile
+        </a>
+
+        <div class="sidebar-label community-label">COMMUNITY</div>
+
+        <div class="nav-item muted-item">
+            <span>♡</span> Notifications
+            <span class="coming-soon">Soon</span>
+        </div>
+
+        <div class="nav-item muted-item">
+            <span>▣</span> Bookmarks
+            <span class="coming-soon">Soon</span>
+        </div>
+
+        <div class="sidebar-user">
+            <div class="avatar">{{ username[0].upper() }}</div>
+            <div class="user-details">
+                <strong>{{ username }}</strong>
+                <a href="/profile/{{ session['user_id'] }}">
+                    View profile
+                </a>
+            </div>
+        </div>
+
+        <a href="/logout" class="logout-link">↪ Log out</a>
+    </aside>
+
+
+    <main class="feed">
+
+        <section class="welcome-banner">
+            <div class="welcome-copy">
+                <span class="eyebrow">YOUR CREATIVE SPACE</span>
+                <h1>Ideas worth sharing. ✨</h1>
+                <p>
+                    Welcome back, {{ username }}!
+                    Discover stories and share your thoughts.
+                </p>
+                <a href="/create_post" class="banner-button">
+                    ＋ Create a story
+                </a>
+            </div>
+            <div class="banner-art" aria-hidden="true">
+                <span>✍</span>
+            </div>
+        </section>
+
+
+        <section class="feed-heading">
+            <div>
+                <h2>
+                    {% if search_query %}
+                        Search results
+                    {% else %}
+                        Your community feed
+                    {% endif %}
+                </h2>
+                <p>Fresh ideas from your blogging community</p>
+            </div>
+            <span class="live-label">
+                <span class="live-dot"></span> Latest
+            </span>
+        </section>
+
+
+        {% if posts %}
+
+            {% for post in posts %}
+
+            <article class="post-card">
+
+                <div class="post-header">
+                    <a class="author-avatar"
+                       href="/profile/{{ post['user_id'] }}">
+                        {{ post['username'][0].upper() }}
+                    </a>
+
+                    <div class="post-author">
+                        <a href="/profile/{{ post['user_id'] }}"
+                           class="author-name">
+                            {{ post['username'] }}
+                        </a>
+                        <span class="post-date">
+                            {{ post['created_at'] }}
+                        </span>
+                    </div>
+
+                    {% if post['user_id'] == session['user_id'] %}
+                        <a class="more-link"
+                           href="/edit_post/{{ post['id'] }}"
+                           title="Edit your blog">•••</a>
+                    {% endif %}
+                </div>
+
+
+                <div class="post-body">
+                    <h3>{{ post['title'] }}</h3>
+                    <p>{{ post['content'] }}</p>
+                </div>
+
+
+                <div class="post-stats">
+                    <span>❤️ {{ post['like_count'] }} likes</span>
+                    <span>💬 {{ post['comment_count'] }} comments</span>
+                </div>
+
+
+                <div class="post-actions">
+                    <a href="/like/{{ post['id'] }}"
+                       class="action-link like-action">
+                        {% if post['liked'] %}
+                            ❤️ Liked
+                        {% else %}
+                            ♡ Like
+                        {% endif %}
+                    </a>
+
+                    <a href="#comment-{{ post['id'] }}"
+                       class="action-link">
+                        ◯ Comment
+                    </a>
+
+                    {% if post['user_id'] == session['user_id'] %}
+                        <a href="/edit_post/{{ post['id'] }}"
+                           class="action-link">
+                            ✎ Edit
+                        </a>
+
+                        <a href="/delete_post/{{ post['id'] }}"
+                           class="action-link delete-action"
+                           onclick="return confirm('Delete this blog?')">
+                            Delete
+                        </a>
+                    {% endif %}
+                </div>
+
+
+                <form class="comment-form"
+                      id="comment-{{ post['id'] }}"
+                      method="POST"
+                      action="/comment/{{ post['id'] }}">
+                    <div class="mini-avatar">
+                        {{ username[0].upper() }}
+                    </div>
+                    <input type="text" name="comment"
+                           placeholder="Share your thoughts..."
+                           required>
+                    <button type="submit">Post</button>
+                </form>
+
+            </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <section class="empty-state">
+                <div class="empty-icon">✎</div>
+                <h2>
+                    {% if search_query %}
+                        No matching blogs found
+                    {% else %}
+                        Your feed is waiting for a story
+                    {% endif %}
+                </h2>
+                <p>
+                    {% if search_query %}
+                        Try another search term.
+                    {% else %}
+                        Be the first to share something interesting.
+                    {% endif %}
+                </p>
+                <a href="/create_post" class="banner-button">
+                    Create your first blog
+                </a>
+            </section>
+
+        {% endif %}
+
+        <footer class="page-footer">
+            Made for curious minds · BlogSpace
+        </footer>
+
+    </main>
+
+
+    <aside class="right-sidebar">
+
+        <section class="side-card">
+            <div class="side-heading">
+                <h3>🔥 Trending blogs</h3>
+            </div>
+
+            {% for item in trending %}
+            <a class="trending-item"
+               href="/?q={{ item['title']|urlencode }}">
+                <span class="trend-number">
+                    {{ loop.index }}
+                </span>
+                <span class="trend-details">
+                    <strong>{{ item['title'] }}</strong>
+                    <small>By {{ item['username'] }}</small>
+                    <small>❤️ {{ item['likes'] }} likes</small>
+                </span>
+            </a>
+            {% else %}
+                <p class="side-empty">
+                    Publish blogs to start trending.
+                </p>
+            {% endfor %}
+        </section>
+
+
+        <section class="side-card">
+            <div class="side-heading">
+                <h3>People to follow</h3>
+            </div>
+            <p class="side-description">
+                Meet other writers in your community.
+            </p>
+
+            {% for person in suggested_users %}
+            <div class="suggested-user">
+
+                <a class="suggested-avatar"
+                   href="/profile/{{ person['id'] }}">
+                    {{ person['username'][0].upper() }}
+                </a>
+
+                <div class="suggested-details">
+                    <a href="/profile/{{ person['id'] }}">
+                        {{ person['username'] }}
+                    </a>
+                    <small>BlogSpace member</small>
+                </div>
+
+                <a class="follow-button"
+                   href="/follow/{{ person['id'] }}">
+                    {% if person['is_following'] %}
+                        Following
+                    {% else %}
+                        Follow
+                    {% endif %}
+                </a>
+
+            </div>
+            {% else %}
+                <p class="side-empty">
+                    Invite a friend to join your community!
+                </p>
+            {% endfor %}
+        </section>
+
+
+        <section class="side-note">
+            <span>💜</span>
+            <h3>Your voice matters.</h3>
+            <p>
+                Write about what inspires you.
+                Connect with people who share your interests.
+            </p>
+        </section>
+
+        <div class="footer-links">
+            BlogSpace · Social Blogging<br>
+            Share ideas. Build connections.
+        </div>
+
+    </aside>
+
+</div>
+
+</body>
+</html>

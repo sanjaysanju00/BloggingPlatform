@@ -1,65 +1,71 @@
+```html
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | BlogSpace</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body>
+<body class="auth-page">
+    <main class="auth-container">
+        <section class="auth-card">
+            <div class="auth-logo">
+                <span class="auth-icon">📝</span>
+                <span>BlogSpace</span>
+            </div>
 
-<div class="auth-container">
+            <h1>Create Account</h1>
+            <p class="auth-subtitle">Join our blogging community</p>
 
-    <div class="auth-card">
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
 
-        <h1>📝 Create Account</h1>
+            <form class="auth-form" method="POST">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                >
 
-        <p>Join our blogging community</p>
+                <label for="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                >
 
-        {% if error %}
-        <div class="error">
-            {{ error }}
-        </div>
-        {% endif %}
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Create a password"
+                    required
+                >
 
-        <form method="POST">
+                <button class="auth-submit" type="submit">
+                    Create Account
+                </button>
+            </form>
 
-            <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                required
-            >
+            <p class="auth-switch">
+                Already have an account?
+                <a href="{{ url_for('login') }}">Login</a>
+            </p>
 
-            <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                required
-            >
-
-            <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                required
-            >
-
-            <button type="submit">
-                Register
-            </button>
-
-        </form>
-
-        <p>
-            Already have an account?
-            <a href="/login">Login</a>
-        </p>
-
-    </div>
-
-</div>
-
+            <div class="auth-footer">
+                Made with 💜 for storytellers
+            </div>
+        </section>
+    </main>
 </body>
-
 </html>
+```
